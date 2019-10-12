@@ -4,8 +4,7 @@ import bcrypt
 
 app = Flask(__name__)
 
-app.config['MONGO_DBNAME'] = 'mongologinexample'
-app.config['MONGO_URI'] = 'mongodb://pretty:printed@ds021731.mlab.com:21731/mongologinexample'
+mongo_uri = 'mongodb://pretty:printed@ds021731.mlab.com:21731/mongologinexample'
 
 mongo = PyMongo(app)
 
@@ -18,7 +17,9 @@ def index():
 
 @app.route('/login', methods=['POST'])
 def login():
-    users = mongo.db.users
+    client = MongoClient(mongo_uri)
+    db = client.miraclecoursetooldb
+    users = db.users
     login_user = users.find_one({'name' : request.form['username']})
 
     if login_user:
@@ -31,7 +32,9 @@ def login():
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     if request.method == 'POST':
-        users = mongo.db.users
+        client = MongoClient(mongo_uri)
+        db = client.miraclecoursetooldb
+        users = db.users
         existing_user = users.find_one({'name' : request.form['username']})
 
         if existing_user is None:
